@@ -58,17 +58,16 @@ int main() {
     if (!window) return -1;
 
     // Create objects
-    createPyramid(0);
-    createPyramid(1);
-    createPyramid(2);
+    createPyramids();
 
     // Compile shaders
     unsigned int basicShader = createShader("basic.vert", "basic.frag");
 
-    // Create MVP matrix
+    // Create MVP matrices
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    glm::mat4 projectionP = glm::perspective(glm::radians(90.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
+    glm::mat4 projectionP = glm::perspective(glm::radians(45.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
     glm::mat4 projectionO = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
+    //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -85,9 +84,7 @@ int main() {
         }
 
         glm::mat4 VP = projectionO * view;
-        renderPyramid(basicShader, VP, 0);
-        renderPyramid(basicShader, VP, 1);
-        renderPyramid(basicShader, VP, 2);
+        renderPyramids(basicShader, VP);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

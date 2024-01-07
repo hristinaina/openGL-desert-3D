@@ -1,7 +1,7 @@
 #pragma once
 
-void createPyramid(int i);
+void createPyramids();
 
-void renderPyramid(unsigned int shaderProgram, glm::mat4 MVP, int i);
+void renderPyramids(unsigned int shaderProgram, glm::mat4 MVP);
 
 void DeleteDesertVariables();
