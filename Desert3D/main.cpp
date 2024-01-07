@@ -9,29 +9,17 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
+#include "helper.h"
+
+/*  TODO
+* 1. prebaciti u sejder fajlove
+* 2. kreirati helper
+* 3. definisati posebne fajlove za piramidu
+* 4. iskoristiti postojeci kod ali prosiriti model matricom 
+*/
 
 const GLuint WIDTH = 800, HEIGHT = 600;
 
-// Vertex Shader
-const char* vertexShaderSource = R"(
-    #version 330 core
-    layout (location = 0) in vec3 aPos;
-    uniform mat4 uMVP;
-    void main()
-    {
-        gl_Position = uMVP * vec4(aPos, 1.0);
-    }
-)";
-
-// Fragment Shader
-const char* fragmentShaderSource = R"(
-    #version 330 core
-    out vec4 FragColor;
-    void main()
-    {
-        FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    }
-)";
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height);
@@ -115,33 +103,22 @@ int main() {
 
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+    // Create objects
     GLuint pyramidVAO = createPyramid();
 
     // Compile shaders
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertexShaderSource, nullptr);
-    glCompileShader(vertexShader);
+    unsigned int basicShader = createShader("basic.vert", "basic.frag");
 
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragmentShaderSource, nullptr);
-    glCompileShader(fragmentShader);
 
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
-    glLinkProgram(shaderProgram);
-
-    glDeleteShader(vertexShader);
-    glDeleteShader(fragmentShader);
-
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
+    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 model = glm::mat4(1.0f);
 
-    glUseProgram(shaderProgram);
-    GLint MVPloc = glGetUniformLocation(shaderProgram, "uMVP");
+    glUseProgram(basicShader);
+    GLint MVPloc = glGetUniformLocation(basicShader, "uMVP");
 
     glEnable(GL_DEPTH_TEST);
+    glClearColor(0.337, 0.451, 0.51, 1.0);
 
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -158,7 +135,7 @@ int main() {
     }
 
     glDeleteVertexArrays(1, &pyramidVAO);
-    glDeleteProgram(shaderProgram);
+    glDeleteProgram(basicShader);
 
     glfwTerminate();
     return 0;
