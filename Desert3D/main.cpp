@@ -10,6 +10,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include "helper.h"
+#include "desert.h"
 
 /*  TODO
 * 1. prebaciti u sejder fajlove
@@ -56,47 +57,6 @@ GLFWwindow* initWindow() {
     return window;
 }
 
-GLuint createPyramid() {
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    GLfloat vertices[] = {
-        // Base
-        -1.0f, 0.0f, -1.0f,
-        1.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, 1.0f,
-
-        // Front face
-        0.0f, 2.0f, 0.0f,
-        -1.0f, 0.0f, -1.0f,
-        1.0f, 0.0f, -1.0f,
-
-        // Left face
-        0.0f, 2.0f, 0.0f,
-        -1.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, 1.0f,
-
-        // Right face
-        0.0f, 2.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, -1.0f
-    };
-
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    return VAO;
-}
-
 int main() {
     GLFWwindow* window = initWindow();
     if (!window) return -1;
@@ -104,18 +64,15 @@ int main() {
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     // Create objects
-    GLuint pyramidVAO = createPyramid();
+    createPyramid();
 
     // Compile shaders
     unsigned int basicShader = createShader("basic.vert", "basic.frag");
 
-
+    // Create MVP matrix
     glm::mat4 projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 model = glm::mat4(1.0f);
-
-    glUseProgram(basicShader);
-    GLint MVPloc = glGetUniformLocation(basicShader, "uMVP");
 
     glEnable(GL_DEPTH_TEST);
     glClearColor(0.337, 0.451, 0.51, 1.0);
@@ -123,18 +80,15 @@ int main() {
     while (!glfwWindowShouldClose(window)) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        glm::mat4 MVP = projection * view * model;
-        glUniformMatrix4fv(MVPloc, 1, GL_FALSE, glm::value_ptr(MVP));
+        // Input actions
 
-        glBindVertexArray(pyramidVAO);
-        glDrawArrays(GL_TRIANGLES, 0, 12);
-        glBindVertexArray(0);
+        glm::mat4 MVP = projection * view * model;
+        renderPyramid(basicShader, MVP);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteVertexArrays(1, &pyramidVAO);
     glDeleteProgram(basicShader);
 
     glfwTerminate();
