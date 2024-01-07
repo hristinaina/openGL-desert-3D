@@ -13,10 +13,9 @@
 #include "desert.h"
 
 /*  TODO
-* 1. prebaciti u sejder fajlove
-* 2. kreirati helper
-* 3. definisati posebne fajlove za piramidu
-* 4. iskoristiti postojeci kod ali prosiriti model matricom 
+* 5. fino pozicionirati piramide na sceni i odrediti gdje da mi bude oaza
+* 6. skalirati piramide
+* 7. svjetlo podesiti i da odgovara pozicijama piramida
 */
 
 GLFWwindow* initWindow() {
@@ -55,11 +54,6 @@ GLFWwindow* initWindow() {
 
 //todo adjust parameters
 void setLight(unsigned int lightingShader) {
-    //material
-    glUniform3f(glGetUniformLocation(lightingShader, "material.ambient"), 1.0f, 0.5f, 0.31f);
-    glUniform3f(glGetUniformLocation(lightingShader, "material.diffuse"), 1.0f, 0.5f, 0.31f);
-    glUniform3f(glGetUniformLocation(lightingShader, "material.specular"), 0.5f, 0.5f, 0.5f);
-    glUniform1f(glGetUniformLocation(lightingShader, "material.shininess"), 32.0f);
     // directional light
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
@@ -111,6 +105,7 @@ int main() {
 
     // Create objects
     createPyramids();
+    createFloor();
 
     // Compile shaders
     unsigned int basicShader = createShader("basic.vert", "basic.frag");
@@ -140,12 +135,14 @@ int main() {
         glUseProgram(0);
 
         renderPyramids(basicShader, view, project);
+        renderFloor(basicShader, view, project);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
     glDeleteProgram(basicShader);
+    DeleteDesertVariables();
 
     glfwTerminate();
     return 0;
