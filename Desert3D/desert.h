@@ -2,6 +2,6 @@
 
 void createPyramids();
 
-void renderPyramids(unsigned int shaderProgram, glm::mat4 MVP);
+void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 project);
 
 void DeleteDesertVariables();

@@ -18,31 +18,32 @@ GLuint pyramidVAO, pyramidVBO;
 glm::vec3 pyramidPositions[] = {
     glm::vec3(0.0f,  0.0f,  0.0f),
     glm::vec3(2.0f,  5.0f, -15.0f),
-    glm::vec3(0.3f, 0.3f, 0.3f)
+    glm::vec3(2.4f, -0.4f, -3.5f),
 };
 
 void createPyramids() {
 
+    // todo should have 4 sides
     GLfloat vertices[] = {
         // Base
-        -1.0f, 0.0f, -1.0f,
-        1.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, 1.0f,
+        -1.0f, 0.0f, -1.0f,  0.0f, -1.0f, 0.0f,
+         1.0f, 0.0f, -1.0f,  0.0f, -1.0f, 0.0f,
+         0.0f, 0.0f,  1.0f,  0.0f, -1.0f, 0.0f,
 
-        // Front face
-        0.0f, 2.0f, 0.0f,
-        -1.0f, 0.0f, -1.0f,
-        1.0f, 0.0f, -1.0f,
+         // Front face
+          0.0f, 2.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+         -1.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+          1.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
 
-        // Left face
-        0.0f, 2.0f, 0.0f,
-        -1.0f, 0.0f, -1.0f,
-        0.0f, 0.0f, 1.0f,
+      // Left face
+       0.0f, 2.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+      -1.0f, 0.0f, -1.0f,  -1.0f, 0.0f, 0.0f,
+       0.0f, 0.0f,  1.0f,  -1.0f, 0.0f, 0.0f,
 
-        // Right face
-        0.0f, 2.0f, 0.0f,
-        0.0f, 0.0f, 1.0f,
-        1.0f, 0.0f, -1.0f
+       // Right face
+        0.0f, 2.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+        0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f, -1.0f,  1.0f, 0.0f, 0.0f
     };
 
     glGenVertexArrays(1, &pyramidVAO);
@@ -53,18 +54,27 @@ void createPyramids() {
     glBindBuffer(GL_ARRAY_BUFFER, pyramidVBO);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
+    // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)0);
     glEnableVertexAttribArray(0);
+
+    // Normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 }
 
-void renderPyramids(unsigned int shaderProgram, glm::mat4 VP) {
+void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 project) {
     glUseProgram(shaderProgram);
 
-    GLint MVPloc = glGetUniformLocation(shaderProgram, "uMVP");
+    GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
+    GLint Vloc = glGetUniformLocation(shaderProgram, "uV");
+    GLint Ploc = glGetUniformLocation(shaderProgram, "uP");
     int colorLoc = glGetUniformLocation(shaderProgram, "color");
+    glUniformMatrix4fv(Vloc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(project));
 
     for (unsigned int i = 0; i < 3; i++)
     {
@@ -72,7 +82,7 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 VP) {
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pyramidPositions[i]);
 
-        glUniformMatrix4fv(MVPloc, 1, GL_FALSE, glm::value_ptr(model * VP));
+        glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
         glUniform4f(colorLoc, 0.85, 0.737, 0.204, 1.0);
 
         glBindVertexArray(pyramidVAO);
