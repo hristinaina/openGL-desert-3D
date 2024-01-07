@@ -13,9 +13,11 @@
 #include "desert.h"
 
 /*  TODO
+* 4. popraviti normale za face culling
 * 5. fino pozicionirati piramide na sceni i odrediti gdje da mi bude oaza
 * 6. skalirati piramide
-* 7. svjetlo podesiti i da odgovara pozicijama piramida
+* 7. podesiti pocetni polozaj kamere da bude iznad piramide
+* 8. svjetlo podesiti i da odgovara pozicijama piramida
 */
 
 GLFWwindow* initWindow() {
@@ -112,7 +114,7 @@ int main() {
 
     // Create MVP matrices
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    glm::mat4 projectionP = glm::perspective(glm::radians(45.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
+    glm::mat4 projectionP = glm::perspective(glm::radians(90.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
     glm::mat4 projectionO = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
     //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 15.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
@@ -120,6 +122,8 @@ int main() {
     glm::mat4 project = projectionP;
 
     glEnable(GL_DEPTH_TEST);
+    //glCullFace(GL_BACK);
+    //glEnable(GL_CULL_FACE);
     glClearColor(0.337, 0.451, 0.51, 1.0);
 
     while (!glfwWindowShouldClose(window)) {
@@ -129,6 +133,14 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
+        }
+        else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        {
+            project = projectionP;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        {
+            project = projectionO;
         }
         glUseProgram(basicShader);
         setLight(basicShader);
