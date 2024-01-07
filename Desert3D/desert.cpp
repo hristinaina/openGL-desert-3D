@@ -13,9 +13,9 @@
 #include "helper.h"
 #include <glm/gtc/type_ptr.hpp>
 
-GLuint pyramidVAO, pyramidVBO;
+GLuint pyramidsVAO[3], pyramidsVBO[3];
 
-void createPyramid() {
+void createPyramid(int i) {
 
     GLfloat vertices[] = {
         // Base
@@ -39,12 +39,12 @@ void createPyramid() {
         1.0f, 0.0f, -1.0f
     };
 
-    glGenVertexArrays(1, &pyramidVAO);
-    glGenBuffers(1, &pyramidVBO);
+    glGenVertexArrays(1, &pyramidsVAO[i]);
+    glGenBuffers(1, &pyramidsVBO[i]);
 
-    glBindVertexArray(pyramidVAO);
+    glBindVertexArray(pyramidsVAO[i]);
 
-    glBindBuffer(GL_ARRAY_BUFFER, pyramidVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, pyramidsVBO[i]);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(GLfloat), (GLvoid*)0);
@@ -54,16 +54,20 @@ void createPyramid() {
     glBindVertexArray(0);
 }
 
-void renderPyramid(unsigned int shaderProgram, glm::mat4 MVP) {
+void renderPyramid(unsigned int shaderProgram, glm::mat4 VP, int i) {
     glUseProgram(shaderProgram);
 
     GLint MVPloc = glGetUniformLocation(shaderProgram, "uMVP");
     int colorLoc = glGetUniformLocation(shaderProgram, "color");
 
-    glUniformMatrix4fv(MVPloc, 1, GL_FALSE, glm::value_ptr(MVP));
+    // define the model matrix
+    glm::vec3 translation(i * 0.3f, 0.0f, i * 0.3f);
+    glm::mat4 model = glm::translate(glm::mat4(1.0f), translation);
+
+    glUniformMatrix4fv(MVPloc, 1, GL_FALSE, glm::value_ptr(model * VP));
     glUniform4f(colorLoc, 0.85, 0.737, 0.204, 1.0);
 
-    glBindVertexArray(pyramidVAO);
+    glBindVertexArray(pyramidsVAO[i]);
 
     glDrawArrays(GL_TRIANGLES, 0, 12);
 
@@ -73,5 +77,7 @@ void renderPyramid(unsigned int shaderProgram, glm::mat4 MVP) {
 }
 
 void DeleteDesertVariables() {
-    glDeleteVertexArrays(1, &pyramidVAO);
+    glDeleteVertexArrays(1, &pyramidsVAO[0]);
+    glDeleteVertexArrays(1, &pyramidsVAO[1]);
+    glDeleteVertexArrays(1, &pyramidsVAO[2]);
 }

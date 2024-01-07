@@ -19,40 +19,36 @@
 * 4. iskoristiti postojeci kod ali prosiriti model matricom 
 */
 
-const GLuint WIDTH = 800, HEIGHT = 600;
-
-
-void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
-    glViewport(0, 0, width, height);
-}
-
 GLFWwindow* initWindow() {
-    if (!glfwInit()) {
-        std::cout << "GLFW Initialization Failed!" << std::endl;
-        return nullptr;
+    if (!glfwInit())
+    {
+        std::cout << "GLFW Biblioteka se nije ucitala! :(\n";
+        exit(1);
     }
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(WIDTH, HEIGHT, "Pyramids - Bird's Eye View", nullptr, nullptr);
-    if (!window) {
-        std::cout << "GLFW Window Creation Failed!" << std::endl;
+    GLFWwindow* window;
+    GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+    const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+
+    window = glfwCreateWindow(mode->width, mode->height, "Desert", monitor, NULL);
+    if (window == NULL)
+    {
+        std::cout << "Prozor nije napravljen! :(\n";
         glfwTerminate();
-        return nullptr;
+        exit(2);
     }
 
     glfwMakeContextCurrent(window);
 
-    glewExperimental = GL_TRUE;
-    if (glewInit() != GLEW_OK) {
-        std::cout << "GLEW Initialization Failed!" << std::endl;
-        glfwTerminate();
-        return nullptr;
+    if (glewInit() != GLEW_OK)
+    {
+        std::cout << "GLEW nije mogao da se ucita! :'(\n";
+        exit(3);
     }
-
-    glViewport(0, 0, WIDTH, HEIGHT);
 
     return window;
 }
@@ -61,16 +57,18 @@ int main() {
     GLFWwindow* window = initWindow();
     if (!window) return -1;
 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
     // Create objects
-    createPyramid();
+    createPyramid(0);
+    createPyramid(1);
+    createPyramid(2);
 
     // Compile shaders
     unsigned int basicShader = createShader("basic.vert", "basic.frag");
 
     // Create MVP matrix
-    glm::mat4 projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
+    const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+    glm::mat4 projectionP = glm::perspective(glm::radians(90.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
+    glm::mat4 projectionO = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
     glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -81,9 +79,15 @@ int main() {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // Input actions
+        if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        {
+            glfwSetWindowShouldClose(window, GL_TRUE);
+        }
 
-        glm::mat4 MVP = projection * view * model;
-        renderPyramid(basicShader, MVP);
+        glm::mat4 VP = projectionO * view;
+        renderPyramid(basicShader, VP, 0);
+        renderPyramid(basicShader, VP, 1);
+        renderPyramid(basicShader, VP, 2);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
