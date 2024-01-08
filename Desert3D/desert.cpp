@@ -23,9 +23,9 @@ glm::vec3 pyramidPositions[] = {
 };
 
 glm::vec3 pyramidScaling[] = {
-    glm::vec3(2.0f,  1.3f,  2.0f),
-    glm::vec3(2.3f,  1.5f, 2.3f),
-    glm::vec3(3.5f,  2.4f, 3.5f),
+    glm::vec3(2.0f,  1.2f,  2.0f),
+    glm::vec3(2.3f,  1.2f, 2.3f),
+    glm::vec3(3.5f,  2.2f, 3.5f),
 };
 
 void createPyramids() {

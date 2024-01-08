@@ -114,12 +114,17 @@ int main() {
 
     // Create MVP matrices
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
-    glm::mat4 projectionP = glm::perspective(glm::radians(90.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
-    glm::mat4 projectionO = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, 0.1f, 100.0f);
-    //glm::mat4 view = glm::translate(glm::mat4(1.0f), glm::vec3(0.0f, 0.0f, -3.0f));
-    glm::mat4 view = glm::lookAt(glm::vec3(0.0f, 15.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 projectionP = glm::perspective(glm::radians(45.0f), (float)mode->width / (float)mode->height, 0.1f, 100.0f);
+    glm::mat4 projectionO = glm::ortho(-30.0f, 30.0f, -20.0f, 20.0f, 0.1f, 100.0f);
+    glm::mat4 projection = projectionP;
+    // Create the camera view matrix based on the biggest pyramid position
+    glm::vec3 pyramidTranslation(-4.0f, 0.0f, 6.0f);
+    glm::vec3 pyramidScale(3.5f, 2.2f, 3.5f);
+    // Camera position calculation
+    glm::vec3 cameraTranslation = pyramidTranslation + glm::vec3(0.0f, 30.0f, 0.0f);  
+    glm::vec3 cameraScale(1.0f / pyramidScale.x, 1.0f / pyramidScale.y, 1.0f / pyramidScale.z);
+    glm::mat4 view = glm::lookAt(cameraTranslation, pyramidTranslation, glm::vec3(0.0f, 0.0f, -1.0f));
     glm::mat4 model = glm::mat4(1.0f);
-    glm::mat4 project = projectionP;
 
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
@@ -136,18 +141,18 @@ int main() {
         }
         else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
         {
-            project = projectionP;
+            projection = projectionP;
         }
         else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
         {
-            project = projectionO;
+            projection = projectionO;
         }
         glUseProgram(basicShader);
         setLight(basicShader);
         glUseProgram(0);
 
-        renderPyramids(basicShader, view, project);
-        renderFloor(basicShader, view, project);
+        renderPyramids(basicShader, view, projection);
+        renderFloor(basicShader, view, projection);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
