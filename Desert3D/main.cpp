@@ -122,8 +122,8 @@ int main() {
     glm::mat4 project = projectionP;
 
     glEnable(GL_DEPTH_TEST);
-    //glCullFace(GL_BACK);
-    //glEnable(GL_CULL_FACE);
+    glCullFace(GL_BACK);
+    glEnable(GL_CULL_FACE);
     glClearColor(0.337, 0.451, 0.51, 1.0);
 
     while (!glfwWindowShouldClose(window)) {

@@ -17,33 +17,39 @@ GLuint pyramidVAO, pyramidVBO;
 GLuint floorVAO, floorVBO;
 
 glm::vec3 pyramidPositions[] = {
-    glm::vec3(0.0f,  0.0f,  0.0f),
-    glm::vec3(2.0f,  0.0f, 4.5f),
-    glm::vec3(2.4f,  0.0f, -3.5f),
+    glm::vec3(-6.0f,  0.0f,  -6.0f),
+    glm::vec3(6.0f,  0.0f, 7.0f),
+    glm::vec3(-4.0f,  0.0f, 6.0f),
+};
+
+glm::vec3 pyramidScaling[] = {
+    glm::vec3(2.0f,  1.3f,  2.0f),
+    glm::vec3(2.3f,  1.5f, 2.3f),
+    glm::vec3(3.5f,  2.4f, 3.5f),
 };
 
 void createPyramids() {
 
-    // todo should have 4 sides
     GLfloat vertices[] = {
-        // Base
-        -1.0f, 0.0f, -1.0f,  0.0f, -1.0f, 0.0f,
-         1.0f, 0.0f, -1.0f,  0.0f, -1.0f, 0.0f,
-         0.0f, 0.0f,  1.0f,  0.0f, -1.0f, 0.0f,
 
-         // Front face
-          0.0f, 2.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-         -1.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
-          1.0f, 0.0f, -1.0f,  0.0f, 1.0f, 0.0f,
+         // Back face
+         -1.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+         0.0f, 3.0f, 0.0f,  0.0f, 0.0f, -1.0f,
+          1.0f, 0.0f, -1.0f,  0.0f, 0.0f, -1.0f,
+
+          // Front face
+         0.0f, 3.0f, 0.0f,  0.0f, 0.0f, 1.0f,
+        -1.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
+         1.0f, 0.0f, 1.0f,  0.0f, 0.0f, 1.0f,
 
       // Left face
-       0.0f, 2.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
+       0.0f, 3.0f, 0.0f,  -1.0f, 0.0f, 0.0f,
       -1.0f, 0.0f, -1.0f,  -1.0f, 0.0f, 0.0f,
-       0.0f, 0.0f,  1.0f,  -1.0f, 0.0f, 0.0f,
+       -1.0f, 0.0f,  1.0f,  -1.0f, 0.0f, 0.0f,
 
        // Right face
-        0.0f, 2.0f, 0.0f,  1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f,
+        0.0f, 3.0f, 0.0f,  1.0f, 0.0f, 0.0f,
+        1.0f, 0.0f,  1.0f,  1.0f, 0.0f, 0.0f,
         1.0f, 0.0f, -1.0f,  1.0f, 0.0f, 0.0f
     };
 
@@ -71,8 +77,8 @@ void createFloor() {
     // Vertices for the floor
     GLfloat vertices[] = {
         -10.0f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f,
-         10.0f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f,
         -10.0f, 0.0f,  10.0f, 0.0f, 1.0f, 0.0f,
+         10.0f, 0.0f, -10.0f, 0.0f, 1.0f, 0.0f,
          10.0f, 0.0f,  10.0f, 0.0f, 1.0f, 0.0f,
     };
 
@@ -96,7 +102,7 @@ void createFloor() {
     glBindVertexArray(0);
 }
 
-void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 project) {
+void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection) {
     glUseProgram(shaderProgram);
 
     //material
@@ -109,13 +115,14 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projec
     GLint Vloc = glGetUniformLocation(shaderProgram, "uV");
     GLint Ploc = glGetUniformLocation(shaderProgram, "uP");
     glUniformMatrix4fv(Vloc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(project));
+    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(projection));
 
     for (unsigned int i = 0; i < 3; i++)
     {
         // define the model matrix
         glm::mat4 model = glm::mat4(1.0f);
         model = glm::translate(model, pyramidPositions[i]);
+        model = glm::scale(model, pyramidScaling[i]);
 
         glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -128,7 +135,7 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projec
     glUseProgram(0);
 }
 
-void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 project) {
+void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection) {
     glUseProgram(shaderProgram);
 
     //material
@@ -144,7 +151,7 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 project) 
     glm::mat4 model = glm::mat4(1.0f);
     glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
     glUniformMatrix4fv(Vloc, 1, GL_FALSE, glm::value_ptr(view));
-    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(project));
+    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(projection));
 
     glBindVertexArray(floorVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
