@@ -147,8 +147,10 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="basic.frag" />
-    <None Include="basic.vert" />
+    <None Include="gouraud.frag" />
+    <None Include="gouraud.vert" />
+    <None Include="phong.frag" />
+    <None Include="phong.vert" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

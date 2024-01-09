@@ -112,7 +112,8 @@ int main() {
     createFloor();
 
     // Compile shaders
-    unsigned int basicShader = createShader("basic.vert", "basic.frag");
+    unsigned int phongShader = createShader("gouraud.vert", "gouraud.frag");
+    unsigned int gouraudShader = createShader("gouraud.vert", "gouraud.frag");
 
     // Create MVP matrices
     const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
@@ -175,18 +176,18 @@ int main() {
         }
 
         view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-        glUseProgram(basicShader);
-        setLight(basicShader, cameraPosition);
+        glUseProgram(phongShader);
+        setLight(phongShader, cameraPosition);
         glUseProgram(0);
 
-        renderPyramids(basicShader, view, projection);
-        renderFloor(basicShader, view, projection);
+        renderPyramids(phongShader, view, projection);
+        renderFloor(phongShader, view, projection);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
-    glDeleteProgram(basicShader);
+    glDeleteProgram(phongShader);
     DeleteDesertVariables();
 
     glfwTerminate();
