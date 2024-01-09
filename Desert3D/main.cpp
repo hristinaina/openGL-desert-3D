@@ -16,6 +16,9 @@
 * 9. tackasto svjetlo: testirati promjenom dometa i postaviti objekat na tu poziciju (sa obicnim sejderom tj da ima mvp)
 */
 
+float cameraSpeed = 0.03f;
+float cameraRotationSpeed = 0.1f;
+
 GLFWwindow* initWindow() {
     if (!glfwInit())
     {
@@ -120,10 +123,11 @@ int main() {
     glm::mat4 projection = projectionP;
     // Create the camera view matrix based on the biggest pyramid position
     glm::vec3 pyramidTranslation(-4.0f, 0.0f, 6.0f);
-    glm::vec3 pyramidScale(3.5f, 2.2f, 3.5f);
     // Camera position calculation
-    glm::vec3 cameraTranslation = pyramidTranslation + glm::vec3(0.0f, 30.0f, 0.0f);  
-    glm::mat4 view = glm::lookAt(cameraTranslation, pyramidTranslation, glm::vec3(0.0f, 0.0f, -1.0f));
+    glm::vec3 cameraPosition = pyramidTranslation + glm::vec3(0.0f, 30.0f, 0.0f);  
+    glm::vec3 cameraFront = pyramidTranslation - cameraPosition;
+    glm::vec3 cameraUp = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
     glm::mat4 model = glm::mat4(1.0f);
 
     glEnable(GL_DEPTH_TEST);
@@ -147,8 +151,19 @@ int main() {
         {
             projection = projectionO;
         }
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+            cameraPosition += cameraSpeed * cameraFront / 15.0f;
+        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+            cameraPosition -= cameraSpeed * cameraFront / 15.0f;
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+            cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+            cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
+
+        view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+
         glUseProgram(basicShader);
-        setLight(basicShader, cameraTranslation);
+        setLight(basicShader, cameraPosition);
         glUseProgram(0);
 
         renderPyramids(basicShader, view, projection);
