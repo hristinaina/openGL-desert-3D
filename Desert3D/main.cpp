@@ -17,7 +17,6 @@
 */
 
 float cameraSpeed = 0.03f;
-float cameraRotationSpeed = 0.1f;
 
 GLFWwindow* initWindow() {
     if (!glfwInit())
@@ -102,7 +101,6 @@ void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation) {
     //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.quadratic"), 0.032f);
     //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
     //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
-
 }
 
 int main() {
@@ -122,13 +120,11 @@ int main() {
     glm::mat4 projectionO = glm::ortho(-30.0f, 30.0f, -20.0f, 20.0f, 0.1f, 100.0f);
     glm::mat4 projection = projectionP;
     // Create the camera view matrix based on the biggest pyramid position
-    glm::vec3 pyramidTranslation(-4.0f, 0.0f, 6.0f);
-    // Camera position calculation
-    glm::vec3 cameraPosition = pyramidTranslation + glm::vec3(0.0f, 30.0f, 0.0f);  
-    glm::vec3 cameraFront = pyramidTranslation - cameraPosition;
+    glm::vec3 pyramidPosition(-4.0f, 0.0f, 6.0f);
+    glm::vec3 cameraPosition = pyramidPosition + glm::vec3(0.0f, 30.0f, 0.0f);  
+    glm::vec3 cameraFront = pyramidPosition - cameraPosition;
     glm::vec3 cameraUp = glm::vec3(0.0f, 0.0f, -1.0f);
     glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
-    glm::mat4 model = glm::mat4(1.0f);
 
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
@@ -151,17 +147,34 @@ int main() {
         {
             projection = projectionO;
         }
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-            cameraPosition += cameraSpeed * cameraFront / 15.0f;
-        if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-            cameraPosition -= cameraSpeed * cameraFront / 15.0f;
+
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+            cameraPosition += cameraSpeed * cameraUp;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+            cameraPosition -= cameraSpeed * cameraUp;
+        }
         if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
             cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-        if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
 
-        view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {  //rotation
+            float rotationAngle = glm::radians(cameraSpeed);
+            cameraUp = glm::normalize(glm::vec3(glm::rotate(glm::mat4(1.0f), rotationAngle, cameraFront) * glm::vec4(cameraUp, 0.0f)));
+        }
+        else if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS) {
+            float rotationAngle = glm::radians(-cameraSpeed);
+            cameraUp = glm::normalize(glm::vec3(glm::rotate(glm::mat4(1.0f), rotationAngle, cameraFront) * glm::vec4(cameraUp, 0.0f)));
+        }
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { //zoom
+            cameraPosition += cameraSpeed * cameraFront / 20.0f;
+        }
+        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+            cameraPosition -= cameraSpeed * cameraFront / 20.0f;
+        }
 
+        view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
         glUseProgram(basicShader);
         setLight(basicShader, cameraPosition);
         glUseProgram(0);
