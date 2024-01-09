@@ -13,11 +13,7 @@
 #include "desert.h"
 
 /*  TODO
-* 4. popraviti normale za face culling
-* 5. fino pozicionirati piramide na sceni i odrediti gdje da mi bude oaza
-* 6. skalirati piramide
-* 7. podesiti pocetni polozaj kamere da bude iznad piramide
-* 8. svjetlo podesiti i da odgovara pozicijama piramida
+* 9. tackasto svjetlo: testirati promjenom dometa i postaviti objekat na tu poziciju (sa obicnim sejderom tj da ima mvp)
 */
 
 GLFWwindow* initWindow() {
@@ -54,15 +50,20 @@ GLFWwindow* initWindow() {
     return window;
 }
 
-//todo adjust parameters
-void setLight(unsigned int lightingShader) {
+void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation) {
+    glm::vec3 pyramidPositions[] = {
+    glm::vec3(-6.0f,  0.0f,  -6.0f),
+    glm::vec3(6.0f,  0.0f, 7.0f),
+    glm::vec3(-4.0f,  0.0f, 6.0f),
+    };
+
     // directional light
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -0.2f, -1.0f, -0.3f);
+    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -0.2f, -1.0f, -0.3f);  //TODO mijenjace poziciju zavisno od doba dana
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
     // point light 1
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].position"), 0.7f, 0.2f, 2.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].position"), pyramidPositions[0].x, pyramidPositions[0].y + 2.0f, pyramidPositions[0].z);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].ambient"), 0.05f, 0.05f, 0.05f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].diffuse"), 0.8f, 0.8f, 0.8f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
@@ -70,7 +71,7 @@ void setLight(unsigned int lightingShader) {
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].linear"), 0.09f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].quadratic"), 0.032f);
     // point light 2
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].position"), 2.3f, -3.3f, -4.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].position"), pyramidPositions[1].x, pyramidPositions[1].y + 2.0f, pyramidPositions[1].z);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].diffuse"), 0.8f, 0.8f, 0.8f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].specular"), 1.0f, 1.0f, 1.0f);
@@ -78,7 +79,7 @@ void setLight(unsigned int lightingShader) {
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].linear"), 0.09f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].quadratic"), 0.032f);
     // point light 3
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), -4.0f, 2.0f, -12.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), pyramidPositions[2].x, pyramidPositions[2].y + 2.0f, pyramidPositions[2].z);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].ambient"), 0.05f, 0.05f, 0.05f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].diffuse"), 0.8f, 0.8f, 0.8f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
@@ -86,7 +87,7 @@ void setLight(unsigned int lightingShader) {
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].linear"), 0.09f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].quadratic"), 0.032f);
 
-    glUniform3f(glGetUniformLocation(lightingShader, "viewPos"), 0.0f, 15.0f, 5.0f); //todo adjust with view
+    glUniform3f(glGetUniformLocation(lightingShader, "viewPos"), cameraTranslation.x, cameraTranslation.y, cameraTranslation.z); //todo adjust with view
     // spotLight
     //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.position"), 0.0f, 5.0f, 5.0f); //todo adjust with view
     //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.direction"), 0.0f, 0.0f, 0.0f);
@@ -122,7 +123,6 @@ int main() {
     glm::vec3 pyramidScale(3.5f, 2.2f, 3.5f);
     // Camera position calculation
     glm::vec3 cameraTranslation = pyramidTranslation + glm::vec3(0.0f, 30.0f, 0.0f);  
-    glm::vec3 cameraScale(1.0f / pyramidScale.x, 1.0f / pyramidScale.y, 1.0f / pyramidScale.z);
     glm::mat4 view = glm::lookAt(cameraTranslation, pyramidTranslation, glm::vec3(0.0f, 0.0f, -1.0f));
     glm::mat4 model = glm::mat4(1.0f);
 
@@ -148,7 +148,7 @@ int main() {
             projection = projectionO;
         }
         glUseProgram(basicShader);
-        setLight(basicShader);
+        setLight(basicShader, cameraTranslation);
         glUseProgram(0);
 
         renderPyramids(basicShader, view, projection);
