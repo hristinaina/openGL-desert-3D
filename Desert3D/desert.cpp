@@ -141,6 +141,7 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projec
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
     glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
     glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "map"),0);
 
     GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
     GLint Vloc = glGetUniformLocation(shaderProgram, "uV");
@@ -180,6 +181,7 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     //material
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
     glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
+    glUniform1f(glGetUniformLocation(shaderProgram, "map"), 0);
     glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
 
     GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
