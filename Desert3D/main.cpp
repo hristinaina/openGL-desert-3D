@@ -14,6 +14,7 @@
 
 /*  TODO
 * 9. tackasto svjetlo: testirati promjenom dometa i postaviti objekat na tu poziciju (sa obicnim sejderom tj da ima mvp)
+* 10. teksture... dodati ime i br indeksa
 */
 
 float cameraSpeed = 0.03f;
@@ -81,7 +82,7 @@ void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation) {
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].linear"), 0.09f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].quadratic"), 0.032f);
     // point light 3
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), pyramidPositions[2].x, pyramidPositions[2].y + 2.0f, pyramidPositions[2].z);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), pyramidPositions[2].x, pyramidPositions[2].y + 4.0f, pyramidPositions[2].z);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].ambient"), 0.05f, 0.05f, 0.05f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].diffuse"), 0.8f, 0.8f, 0.8f);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
