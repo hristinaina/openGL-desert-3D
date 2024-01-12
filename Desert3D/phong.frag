@@ -91,5 +91,9 @@ void main()
     // phase 3: Spot light
     //result += CalcSpotLight(spotLight, norm, FragPos, viewDir);    
     
-    FragColor = vec4(result, 1.0);
+    vec4 texture = texture(material.diffuse, TexCoords.xy);
+    vec3 final = texture.rgb * result;
+    final = pow(final, vec3(1.0 / 2.2)); //Apply gamma correction to the final values.
+
+    FragColor = vec4(final, 1.0);
 }

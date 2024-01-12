@@ -55,40 +55,40 @@ GLFWwindow* initWindow() {
 
 void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation) {
     glm::vec3 pyramidPositions[] = {
-    glm::vec3(-6.0f,  0.0f,  -6.0f),
-    glm::vec3(6.0f,  0.0f, 7.0f),
-    glm::vec3(-4.0f,  0.0f, 6.0f),
+    glm::vec3(-6.0f,  3.6f,  -6.0f),
+    glm::vec3(6.0f,  3.6f, 7.0f),
+    glm::vec3(-4.0f, 6.6f, 6.0f),
     };
 
     // directional light
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -0.2f, -1.0f, -0.3f);  //TODO mijenjace poziciju zavisno od doba dana
+    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -1.2f, -5.0f, -1.3f);  //TODO mijenjace poziciju zavisno od doba dana
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
     glUniform3f(glGetUniformLocation(lightingShader, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
     // point light 1
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].position"), pyramidPositions[0].x, pyramidPositions[0].y + 2.0f, pyramidPositions[0].z);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].ambient"), 0.05f, 0.05f, 0.05f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].diffuse"), 0.8f, 0.8f, 0.8f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].specular"), 1.0f, 1.0f, 1.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].position"), pyramidPositions[0].x, pyramidPositions[0].y + 1.0f, pyramidPositions[0].z);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].ambient"), 0.0f, 0.7f, 0.7f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].diffuse"), 0.6f, 0.6f, 0.6f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].specular"), 0.5f, 0.5f, 0.5f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].linear"), 0.09f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].quadratic"), 0.032f);
-    // point light 2
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].position"), pyramidPositions[1].x, pyramidPositions[1].y + 2.0f, pyramidPositions[1].z);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].ambient"), 0.05f, 0.05f, 0.05f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].diffuse"), 0.8f, 0.8f, 0.8f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].specular"), 1.0f, 1.0f, 1.0f);
+    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].linear"), 0.7f);
+    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].quadratic"), 1.8f);
+    // point light 2                 
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].position"), pyramidPositions[1].x, pyramidPositions[1].y + 1.0f, pyramidPositions[1].z);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].ambient"), 0.0f, 0.7f, 0.7f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].diffuse"), 0.6f, 0.6f, 0.6f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].specular"), 0.5f, 0.5f, 0.5f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].linear"), 0.09f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].quadratic"), 0.032f);
+    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].linear"), 0.7f);
+    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].quadratic"), 1.8f);
     // point light 3
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), pyramidPositions[2].x, pyramidPositions[2].y + 4.0f, pyramidPositions[2].z);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].ambient"), 0.05f, 0.05f, 0.05f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].diffuse"), 0.8f, 0.8f, 0.8f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].specular"), 1.0f, 1.0f, 1.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), pyramidPositions[2].x, pyramidPositions[2].y + 1.0f, pyramidPositions[2].z);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].ambient"), 0.0f, 0.7f, 0.7f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].diffuse"), 0.6f, 0.6f, 0.6f);
+    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].specular"), 0.5f, 0.5f, 0.5f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].linear"), 0.09f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].quadratic"), 0.032f);
+    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].linear"), 0.7f);
+    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].quadratic"), 1.8f);
 
     glUniform3f(glGetUniformLocation(lightingShader, "viewPos"), cameraTranslation.x, cameraTranslation.y, cameraTranslation.z); //todo adjust with view
     // spotLight
@@ -127,7 +127,7 @@ int main() {
     glm::vec3 cameraPosition = pyramidPosition + glm::vec3(0.0f, 30.0f, 0.0f);  
     glm::vec3 cameraFront = pyramidPosition - cameraPosition;
     glm::vec3 cameraUp = glm::vec3(0.0f, 0.0f, -1.0f);
-    glm::mat4 view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+    glm::mat4 view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
 
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
@@ -185,7 +185,7 @@ int main() {
             cameraPosition -= cameraSpeed * cameraFront / 20.0f;
         }
 
-        view = glm::lookAt(cameraPosition, cameraPosition + cameraFront, cameraUp);
+        view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
         glUseProgram(activeShader);
         setLight(activeShader, cameraPosition);
         glUseProgram(0);
