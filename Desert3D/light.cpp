@@ -33,8 +33,8 @@ double mapRange(double value, double inMin, double inMax, double outMin, double 
     return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
 }
 
-void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation, glm::vec3 pyramidPositions[]) {
-    updateVariables(false, false); //paused, restarted
+void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation, glm::vec3 pyramidPositions[], bool paused, bool restarted) {
+    updateVariables(paused, restarted);
     glClearColor(0.243 + yLast / 2, 0.435 + yLast / 2, 0.529 + yLast / 2, 1.0);
 
     float lightValue = mapRange(yLast, -0.8, 0.8, 0.0, 0.6);

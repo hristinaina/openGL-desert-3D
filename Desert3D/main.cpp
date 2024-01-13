@@ -18,7 +18,10 @@
 * 10. dodati ime i br indeksa
 */
 
+bool paused = false;
+bool restared = false;
 float cameraSpeed = 0.03f;
+
 glm::vec3 pyramidPeakPositions[] = {
 glm::vec3(-6.0f,  3.6f,  -6.0f),
 glm::vec3(6.0f,  3.6f, 7.0f),
@@ -98,14 +101,16 @@ int main() {
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
-        else if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        // choose projection type
+        else if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
         {
             projection = projectionP;
         }
-        else if (glfwGetKey(window, GLFW_KEY_O) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
         {
             projection = projectionO;
         }
+        // choose shader type
         if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
         {
             activeShader = phongShader;
@@ -114,19 +119,30 @@ int main() {
         {
             activeShader = gouraudShader;
         }
-
-        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        // pause or restart the scene
+        if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
+        {
+            paused = true;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            restared = true;
+            paused = false;
+        }
+        // move up-down
+        if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) { 
             cameraPosition += cameraSpeed * cameraUp;
         }
         else if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
             cameraPosition -= cameraSpeed * cameraUp;
         }
-        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        // move left-right
+        if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)  
             cameraPosition -= glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
         else if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
             cameraPosition += glm::normalize(glm::cross(cameraFront, cameraUp)) * cameraSpeed;
-
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {  //rotation
+        // rotate
+        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS) {  
             float rotationAngle = glm::radians(cameraSpeed);
             cameraUp = glm::normalize(glm::vec3(glm::rotate(glm::mat4(1.0f), rotationAngle, cameraFront) * glm::vec4(cameraUp, 0.0f)));
         }
@@ -134,7 +150,8 @@ int main() {
             float rotationAngle = glm::radians(-cameraSpeed);
             cameraUp = glm::normalize(glm::vec3(glm::rotate(glm::mat4(1.0f), rotationAngle, cameraFront) * glm::vec4(cameraUp, 0.0f)));
         }
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { //zoom
+        // zoom
+        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { 
             cameraPosition += cameraSpeed * cameraFront / 20.0f;
         }
         else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
@@ -143,7 +160,7 @@ int main() {
 
         view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
         glUseProgram(activeShader);
-        setLight(activeShader, cameraPosition, pyramidPeakPositions);
+        setLight(activeShader, cameraPosition, pyramidPeakPositions, paused, restared);
         glUseProgram(0);
 
         // render created objects
@@ -153,6 +170,8 @@ int main() {
 
         glfwSwapBuffers(window);
         glfwPollEvents();
+
+        restared = false;
     }
 
     glDeleteProgram(phongShader);
