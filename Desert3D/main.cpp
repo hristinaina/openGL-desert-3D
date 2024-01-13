@@ -11,13 +11,19 @@
 #include <glm/gtc/type_ptr.hpp>
 #include "helper.h"
 #include "desert.h"
+#include "model.hpp"
+#include "light.h"
 
 /*  TODO
-* 9. tackasto svjetlo: testirati promjenom dometa i postaviti objekat na tu poziciju (sa obicnim sejderom tj da ima mvp)
-* 10. teksture... dodati ime i br indeksa
+* 10. dodati ime i br indeksa
 */
 
 float cameraSpeed = 0.03f;
+glm::vec3 pyramidPeakPositions[] = {
+glm::vec3(-6.0f,  3.6f,  -6.0f),
+glm::vec3(6.0f,  3.6f, 7.0f),
+glm::vec3(-4.0f, 6.6f, 6.0f),
+};
 
 GLFWwindow* initWindow() {
     if (!glfwInit())
@@ -53,57 +59,6 @@ GLFWwindow* initWindow() {
     return window;
 }
 
-void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation) {
-    glm::vec3 pyramidPositions[] = {
-    glm::vec3(-6.0f,  3.6f,  -6.0f),
-    glm::vec3(6.0f,  3.6f, 7.0f),
-    glm::vec3(-4.0f, 6.6f, 6.0f),
-    };
-
-    // directional light
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -1.2f, -5.0f, -1.3f);  //TODO mijenjace poziciju zavisno od doba dana
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
-    // point light 1
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].position"), pyramidPositions[0].x, pyramidPositions[0].y + 1.0f, pyramidPositions[0].z);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].ambient"), 0.0f, 0.7f, 0.7f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].diffuse"), 0.6f, 0.6f, 0.6f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].specular"), 0.5f, 0.5f, 0.5f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].linear"), 0.7f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[0].quadratic"), 1.8f);
-    // point light 2                 
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].position"), pyramidPositions[1].x, pyramidPositions[1].y + 1.0f, pyramidPositions[1].z);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].ambient"), 0.0f, 0.7f, 0.7f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].diffuse"), 0.6f, 0.6f, 0.6f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[1].specular"), 0.5f, 0.5f, 0.5f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].linear"), 0.7f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[1].quadratic"), 1.8f);
-    // point light 3
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].position"), pyramidPositions[2].x, pyramidPositions[2].y + 1.0f, pyramidPositions[2].z);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].ambient"), 0.0f, 0.7f, 0.7f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].diffuse"), 0.6f, 0.6f, 0.6f);
-    glUniform3f(glGetUniformLocation(lightingShader, "pointLights[2].specular"), 0.5f, 0.5f, 0.5f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].constant"), 1.0f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].linear"), 0.7f);
-    glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].quadratic"), 1.8f);
-
-    glUniform3f(glGetUniformLocation(lightingShader, "viewPos"), cameraTranslation.x, cameraTranslation.y, cameraTranslation.z); //todo adjust with view
-    // spotLight
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.position"), 0.0f, 5.0f, 5.0f); //todo adjust with view
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.direction"), 0.0f, 0.0f, 0.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.constant"), 1.0f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.linear"), 0.09f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.quadratic"), 0.032f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
-}
-
 int main() {
     GLFWwindow* window = initWindow();
     if (!window) return -1;
@@ -111,6 +66,7 @@ int main() {
     // Create objects
     createPyramids();
     createFloor();
+    Model sphere("res/sphere.obj");
 
     // Compile shaders
     unsigned int phongShader = createShader("phong.vert", "phong.frag");
@@ -181,17 +137,19 @@ int main() {
         if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS) { //zoom
             cameraPosition += cameraSpeed * cameraFront / 20.0f;
         }
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
+        else if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS) {
             cameraPosition -= cameraSpeed * cameraFront / 20.0f;
         }
 
         view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
         glUseProgram(activeShader);
-        setLight(activeShader, cameraPosition);
+        setLight(activeShader, cameraPosition, pyramidPeakPositions);
         glUseProgram(0);
 
+        // render created objects
         renderPyramids(activeShader, view, projection);
         renderFloor(activeShader, view, projection);
+        renderSphere(activeShader, view, projection, sphere, pyramidPeakPositions);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
