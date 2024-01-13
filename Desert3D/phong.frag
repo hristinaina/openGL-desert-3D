@@ -7,6 +7,7 @@ in vec2 TexCoords;
 out vec4 FragColor;
 
 uniform vec3 viewPos;
+uniform float alpha;
 
 struct Material {
     sampler2D diffuse;
@@ -95,5 +96,5 @@ void main()
     vec3 final = texture.rgb * result;
     final = pow(final, vec3(1.0 / 2.2)); //Apply gamma correction to the final values.
 
-    FragColor = vec4(final, 1.0);
+    FragColor = vec4(final, alpha);
 }
