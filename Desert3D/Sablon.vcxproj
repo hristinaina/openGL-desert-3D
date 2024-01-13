@@ -147,6 +147,7 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="model.cpp" />
+    <ClCompile Include="oasis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gouraud.frag" />
@@ -160,6 +161,7 @@
     <ClInclude Include="helper.h" />
     <ClInclude Include="light.h" />
     <ClInclude Include="model.hpp" />
+    <ClInclude Include="oasis.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

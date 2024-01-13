@@ -29,6 +29,12 @@ glm::vec3 pyramidScaling[] = {
     glm::vec3(3.5f,  2.2f, 3.5f),
 };
 
+glm::vec3 floorPositions[] = {
+    glm::vec3(0.0f,  0.0f,  0.0f),
+    glm::vec3(0.0f,  0.0f, 10.0f),
+    glm::vec3(10.0f,  0.0f, 10.0f),
+};
+
 void createPyramids() {
 
     GLfloat vertices[] = {
@@ -92,9 +98,9 @@ void createFloor() {
     // Vertices for the floor
     GLfloat vertices[] = {
         -10.0f, 0.0f, -10.0f, 0.0f, -1.0f, 0.0f,  -1.0, -1.0,
-        -10.0f, 0.0f,  10.0f, 0.0f, -1.0f, 0.0f,  -1.0, 1.0,
-         10.0f, 0.0f, -10.0f, 0.0f, -1.0f, 0.0f,  1.0, -1.0,
-         10.0f, 0.0f,  10.0f, 0.0f, -1.0f, 0.0f,  1.0, 1.0,
+        -10.0f, 0.0f,  0.0f, 0.0f, -1.0f, 0.0f,  -1.0, 1.0,
+         0.0f, 0.0f, -10.0f, 0.0f, -1.0f, 0.0f,  1.0, -1.0,
+         0.0f, 0.0f,  0.0f, 0.0f, -1.0f, 0.0f,  1.0, 1.0,
     };
 
     glGenVertexArrays(1, &floorVAO);
@@ -200,8 +206,17 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     glActiveTexture(GL_TEXTURE1);
     glBindTexture(GL_TEXTURE_2D, sandTexture);
 
-    glBindVertexArray(floorVAO);
-    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        // define the model matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, floorPositions[i]);
+
+        glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+
+        glBindVertexArray(floorVAO);
+        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+    }
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);

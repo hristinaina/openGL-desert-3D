@@ -13,8 +13,10 @@
 #include "desert.h"
 #include "model.hpp"
 #include "light.h"
+#include "oasis.h"
 
 /*  TODO
+* 9. dodati uniformu za odredjivanje providnosti ove boje tj teksture u fragment shader
 * 10. dodati ime i br indeksa
 */
 
@@ -70,6 +72,7 @@ int main() {
     createPyramids();
     createFloor();
     Model sphere("res/sphere.obj");
+    createWater();
 
     // Compile shaders
     unsigned int phongShader = createShader("phong.vert", "phong.frag");
@@ -164,6 +167,7 @@ int main() {
         glUseProgram(0);
 
         // render created objects
+        renderWater(activeShader, view, projection);
         renderPyramids(activeShader, view, projection);
         renderFloor(activeShader, view, projection);
         renderSphere(activeShader, view, projection, sphere, pyramidPeakPositions);
