@@ -12,13 +12,45 @@
 #include "model.hpp"
 #include "light.h"
 
+float rotationSpeed = 0.1;
+float r = 0.8;
+float initialTime = glfwGetTime();
+float xLast, yLast;
+
+void updateVariables(float paused, float restared) {
+    float ydelta = r * (sin((glfwGetTime() - initialTime) * rotationSpeed));
+    float xdelta = r * (cos((glfwGetTime() - initialTime) * rotationSpeed));
+    if (!paused) {
+        xLast = xdelta;
+        yLast = ydelta;
+    }
+    if (restared) {
+        initialTime = glfwGetTime();
+    }
+}
+
+double mapRange(double value, double inMin, double inMax, double outMin, double outMax) {
+    return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
+}
+
 void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation, glm::vec3 pyramidPositions[]) {
+    updateVariables(false, false); //paused, restarted
+    glClearColor(0.243 + yLast / 2, 0.435 + yLast / 2, 0.529 + yLast / 2, 1.0);
+
+    float lightValue = mapRange(yLast, -0.8, 0.8, 0.0, 0.6);
+    float colorDelta;
+    if (lightValue > 0.0f && lightValue < 0.45f) {
+        colorDelta = mapRange(lightValue, 0.2, 0.45, 0.6, 1.0);;
+    }
+    else {
+        colorDelta = 1.0;
+    }
 
     // directional light
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), -1.2f, -5.0f, -1.3f);  //TODO mijenjace poziciju zavisno od doba dana
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.ambient"), 0.05f, 0.05f, 0.05f);
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.diffuse"), 0.4f, 0.4f, 0.4f);
-    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.specular"), 0.5f, 0.5f, 0.5f);
+    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.direction"), xLast*3, yLast*5, xLast*2); 
+    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.ambient"), lightValue, lightValue * colorDelta, lightValue);
+    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.diffuse"), lightValue, lightValue * colorDelta, lightValue);
+    glUniform3f(glGetUniformLocation(lightingShader, "dirLight.specular"), 0.0f, 0.0f, 0.0f);
     // point light 1
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].position"), pyramidPositions[0].x, pyramidPositions[0].y + 1.0f, pyramidPositions[0].z);
     glUniform3f(glGetUniformLocation(lightingShader, "pointLights[0].ambient"), 0.0f, 0.7f, 0.7f);
