@@ -142,6 +142,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="desert.cpp" />
+    <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -152,6 +154,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="desert.h" />
     <ClInclude Include="mesh.hpp" />
     <ClInclude Include="model.hpp" />
     <ClInclude Include="shader.hpp" />
