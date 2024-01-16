@@ -145,6 +145,7 @@
     <ClCompile Include="desert.cpp" />
     <ClCompile Include="light.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="oasis.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="gouraud.frag" />
@@ -158,6 +159,7 @@
     <ClInclude Include="light.h" />
     <ClInclude Include="mesh.hpp" />
     <ClInclude Include="model.hpp" />
+    <ClInclude Include="oasis.h" />
     <ClInclude Include="shader.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

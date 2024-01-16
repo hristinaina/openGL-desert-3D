@@ -13,6 +13,7 @@
 
 #include "light.h"
 
+
 float rotationSpeed = 0.1;
 float r = 0.8;
 float initialTime = glfwGetTime();
