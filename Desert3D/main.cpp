@@ -13,119 +13,14 @@
 
 #include "model.hpp"
 #include "shader.hpp"
+#include "light.h"
 #include "desert.h"
+
 
 using namespace std;
 
-float rotationSpeed = 0.1;
-float r = 0.8;
-float initialTime = glfwGetTime();
-float xLast, yLast;
-
 GLuint waterVAO, waterVBO;
 unsigned waterTexture;
-
-void updateVariables(float paused, float restared) {
-    float ydelta = r * (sin((glfwGetTime() - initialTime) * rotationSpeed));
-    float xdelta = r * (cos((glfwGetTime() - initialTime) * rotationSpeed));
-    if (!paused) {
-        xLast = xdelta;
-        yLast = ydelta;
-    }
-    if (restared) {
-        initialTime = glfwGetTime();
-    }
-}
-
-double mapRange(double value, double inMin, double inMax, double outMin, double outMax) {
-    return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
-}
-
-void setLight(Shader& lightingShader, glm::vec3 cameraTranslation, glm::vec3 pyramidPositions[], bool paused, bool restarted) {
-    updateVariables(paused, restarted);
-    glClearColor(0.243 + yLast / 2, 0.435 + yLast / 2, 0.529 + yLast / 2, 1.0);
-
-    float lightValue = mapRange(yLast, -0.8, 0.8, 0.0, 0.6);
-    float colorDelta;
-    if (lightValue > 0.0f && lightValue < 0.45f) {
-        colorDelta = mapRange(lightValue, 0.2, 0.45, 0.6, 1.0);;
-    }
-    else {
-        colorDelta = 1.0;
-    }
-
-    // directional light
-    lightingShader.setVec3("dirLight.direction", xLast * 3, yLast * 5, xLast * 2);
-    lightingShader.setVec3("dirLight.ambient", lightValue, lightValue * colorDelta, lightValue);
-    lightingShader.setVec3("dirLight.diffuse", lightValue, lightValue * colorDelta, lightValue);
-    lightingShader.setVec3("dirLight.specular", 0.0f, 0.0f, 0.0f);
-    // point light 1
-    lightingShader.setVec3("pointLights[0].position", pyramidPositions[0].x, pyramidPositions[0].y + 1.0f, pyramidPositions[0].z);
-    lightingShader.setVec3("pointLights[0].ambient", 0.0f, 0.7f, 0.7f);
-    lightingShader.setVec3("pointLights[0].diffuse", 0.6f, 0.6f, 0.6f);
-    lightingShader.setVec3("pointLights[0].specular", 0.5f, 0.5f, 0.5f);
-    lightingShader.setFloat("pointLights[0].constant", 1.0f);
-    lightingShader.setFloat("pointLights[0].linear", 0.7f);
-    lightingShader.setFloat("pointLights[0].quadratic", 1.8f);
-    // point light 2                 
-    lightingShader.setVec3("pointLights[1].position", pyramidPositions[1].x, pyramidPositions[1].y + 1.0f, pyramidPositions[1].z);
-    lightingShader.setVec3("pointLights[1].ambient", 0.0f, 0.7f, 0.7f);
-    lightingShader.setVec3("pointLights[1].diffuse", 0.6f, 0.6f, 0.6f);
-    lightingShader.setVec3("pointLights[1].specular", 0.5f, 0.5f, 0.5f);
-    lightingShader.setFloat("pointLights[1].constant", 1.0f);
-    lightingShader.setFloat("pointLights[1].linear", 0.7f);
-    lightingShader.setFloat("pointLights[1].quadratic", 1.8f);
-    // point light 3
-    lightingShader.setVec3("pointLights[2].position", pyramidPositions[2].x, pyramidPositions[2].y + 1.0f, pyramidPositions[2].z);
-    lightingShader.setVec3("pointLights[2].ambient", 0.0f, 0.7f, 0.7f);
-    lightingShader.setVec3("pointLights[2].diffuse", 0.6f, 0.6f, 0.6f);
-    lightingShader.setVec3("pointLights[2].specular", 0.5f, 0.5f, 0.5f);
-    lightingShader.setFloat("pointLights[2].constant", 1.0f);
-    lightingShader.setFloat("pointLights[2].linear", 0.7f);
-    lightingShader.setFloat("pointLights[2].quadratic", 1.8f);
-
-    lightingShader.setVec3("viewPos", cameraTranslation.x, cameraTranslation.y, cameraTranslation.z); //todo adjust with view
-
-    // spotLight
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.position"), 0.0f, 5.0f, 5.0f); //todo adjust with view
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.direction"), 0.0f, 0.0f, 0.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.constant"), 1.0f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.linear"), 0.09f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.quadratic"), 0.032f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
-}
-
-void renderSphere(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Model sphere, glm::vec3 pyramidPositions[]) {
-    shaderProgram.use();
-
-    //material
-    shaderProgram.setInt("material.diffuse", 0);
-    shaderProgram.setInt("material.specular", 0);
-    shaderProgram.setFloat("map", 0);
-    shaderProgram.setFloat("material.shininess", 32.0f);
-    shaderProgram.setFloat("alpha", 1.0f);
-
-    shaderProgram.setMat4("uV", view);
-    shaderProgram.setMat4("uP", projection);
-
-    for (unsigned int i = 0; i < 3; i++)
-    {
-        // define the model matrix
-        glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, pyramidPositions[i] + glm::vec3(0.0f, 1.0f, 0.0f));
-        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
-
-        shaderProgram.setMat4("uM", model);
-
-        sphere.Draw(shaderProgram);
-    }
-
-    glUseProgram(0);
-}
 
 void createWater() {
     // Vertices for the floor
@@ -220,7 +115,7 @@ void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Mode
 
     shaderProgram.setMat4("uM", model);
 
-    fish.Draw(shaderProgram);
+    fish.Draw(shaderProgram.ID);
 
     glUseProgram(0);
 }
@@ -273,6 +168,38 @@ GLFWwindow* initWindow() {
     }
 
     return window;
+}
+
+
+void renderSphere(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection, Model sphere, glm::vec3 pyramidPositions[]) {
+    glUseProgram(shaderProgram);
+
+    //material
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 0);
+    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "map"), 0);
+    glUniform1f(glGetUniformLocation(shaderProgram, "alpha"), 1.0f);
+
+    GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
+    GLint Vloc = glGetUniformLocation(shaderProgram, "uV");
+    GLint Ploc = glGetUniformLocation(shaderProgram, "uP");
+    glUniformMatrix4fv(Vloc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(projection));
+
+    for (unsigned int i = 0; i < 3; i++)
+    {
+        // define the model matrix
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::translate(model, pyramidPositions[i] + glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.1f, 0.1f, 0.1f));
+
+        glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+
+        sphere.Draw(shaderProgram);
+    }
+
+    glUseProgram(0);
 }
 
 int main() {
@@ -379,14 +306,14 @@ int main() {
 
         view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
         activeShader.use();
-        setLight(activeShader, cameraPosition, pyramidPeakPositions, paused, restared);
+        setLight(activeShader.ID, cameraPosition, pyramidPeakPositions, paused, restared);
         glUseProgram(0);
 
         // render created objects
         renderWater(activeShader, view, projection);
         renderPyramids(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
-        renderSphere(activeShader, view, projection, sphere, pyramidPeakPositions);
+        renderSphere(activeShader.ID, view, projection, sphere, pyramidPeakPositions);
         renderFish(activeShader, view, projection, fish);
 
         glfwSwapBuffers(window);
