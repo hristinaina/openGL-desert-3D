@@ -96,5 +96,14 @@ void main()
     vec3 final = texture.rgb * result;
     final = pow(final, vec3(1.0 / 2.2)); //Apply gamma correction to the final values.
 
-    FragColor = vec4(final, alpha);
+    // Check if the alpha value of the texture at this pixel is greater than a threshold
+    float alphaThreshold = 0.1;
+    if (texture.a > alphaThreshold) {
+        // There is texture at this pixel
+        FragColor = vec4(final, alpha);
+    } else {
+        // No texture at this pixel, make it transparent
+        FragColor = vec4(0.0, 0.0, 0.0, 0.0);
+    }
+    //FragColor is the color output of this shader
 }

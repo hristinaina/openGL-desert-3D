@@ -60,6 +60,9 @@ void createWater(unsigned int texture) {
 }
 
 void renderWater(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection) {
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     glUseProgram(shaderProgram);
 
     //material
@@ -67,7 +70,7 @@ void renderWater(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 0);
     glUniform1f(glGetUniformLocation(shaderProgram, "map"), 0);
     glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
-    glUniform1f(glGetUniformLocation(shaderProgram, "alpha"), 0.3f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "alpha"), 0.5f);
 
     GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
     GLint Vloc = glGetUniformLocation(shaderProgram, "uV");
@@ -91,4 +94,5 @@ void renderWater(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     glUseProgram(0);
+    glDisable(GL_BLEND);
 }

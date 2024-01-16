@@ -49,7 +49,9 @@ void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Mode
 
     // define the model matrix
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(0.0f, 4.0f, 0.0f));
+    model = glm::translate(model, glm::vec3(5.0f, -1.0f, -5.0f));
+    model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
+    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 1.0f));
 
     shaderProgram.setMat4("uM", model);
 
@@ -242,11 +244,11 @@ int main() {
         glUseProgram(0);
 
         // render created objects
+        renderFish(activeShader, view, projection, fish);
         renderWater(activeShader.ID, view, projection);
         renderPyramids(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
         renderSphere(activeShader.ID, view, projection, sphere, pyramidPeakPositions);
-        renderFish(activeShader, view, projection, fish);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
