@@ -151,6 +151,11 @@
     <None Include="phong.vert" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="mesh.hpp" />
+    <ClInclude Include="model.hpp" />
+    <ClInclude Include="shader.hpp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="packages\glfw.3.3.8\build\native\glfw.targets" Condition="Exists('packages\glfw.3.3.8\build\native\glfw.targets')" />
