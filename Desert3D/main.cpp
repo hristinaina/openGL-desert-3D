@@ -65,7 +65,7 @@ void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Mode
     glUseProgram(0);
 }
 
-void renderSphere(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection, Model sphere, glm::vec3 pyramidPositions[]) {
+void renderSphere(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection, Model sphere, Model cube, glm::vec3 pyramidPositions[]) {
     glUseProgram(shaderProgram);
 
     //material
@@ -92,6 +92,14 @@ void renderSphere(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projecti
 
         sphere.Draw(shaderProgram);
     }
+
+    // define the model matrix
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, pyramidPositions[2] + glm::vec3(0.0f, 2.0f, 0.0f));
+    model = glm::scale(model, glm::vec3(0.002f, 0.002f, 0.002f));
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+    cube.Draw(shaderProgram);
 
     glUseProgram(0);
 }
@@ -145,6 +153,7 @@ int main() {
     createFloor(sandTexture);
     Model sphere(std::string("res/sphere.obj"));
     Model fish(std::string("res/Fish/12265_Fish_v1_L2.obj"));
+    Model cube(std::string("res/Apple/10162_Apple_v01_l3.obj"));
 
     // Compile shaders
     Shader phongShader("phong.vert", "phong.frag");
@@ -266,7 +275,7 @@ int main() {
         renderWater(activeShader.ID, view, projection);
         renderPyramids(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
-        renderSphere(activeShader.ID, view, projection, sphere, pyramidPeakPositions);
+        renderSphere(activeShader.ID, view, projection, sphere, cube, pyramidPeakPositions);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
