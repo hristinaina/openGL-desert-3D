@@ -146,11 +146,13 @@ int main() {
     unsigned pyramidTexture = TextureFromFile("pyramid-texture.jpg", "res");
     unsigned sandTexture = TextureFromFile("sand.jpg", "res");
     unsigned waterTexture = TextureFromFile("water.jpg", "res");
+    unsigned grassTexture = TextureFromFile("grass.png", "res");
 
     // Create objects
     createWater(waterTexture);
     createPyramids(pyramidTexture);
     createFloor(sandTexture);
+    createGrass(grassTexture);
     Model sphere(std::string("res/sphere.obj"));
     Model fish(std::string("res/Fish/12265_Fish_v1_L2.obj"));
     Model cube(std::string("res/Apple/10162_Apple_v01_l3.obj"));
@@ -271,21 +273,22 @@ int main() {
         glUseProgram(0);
 
         // render created objects
+       
         renderFish(activeShader, view, projection, fish);
         renderWater(activeShader.ID, view, projection);
-        renderPyramids(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
+        renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(-2.0f, 0.0f, -5.0f)), view, projection);
+        renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-2.15f, 0.0f, -0.0f)), view, projection);
+        renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-1.17f, 0.0f, 0.3f)), view, projection);
+        renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(5.0f, 0.0f, 0.5f)), view, projection);
+        renderPyramids(activeShader.ID, view, projection);   
         renderSphere(activeShader.ID, view, projection, sphere, cube, pyramidPeakPositions);
-
+       
         glfwSwapBuffers(window);
         glfwPollEvents();
 
         restared = false;
     }
-
-    //glDeleteProgram(phongShader);
-    //glDeleteProgram(gouraudShader);
-    //DeleteDesertVariables();
 
     glfwTerminate();
     return 0;
