@@ -27,6 +27,8 @@ using namespace std;
 bool paused = false;
 bool restared = false;
 float cameraSpeed = 0.03f;
+float fishX = 0.0f;  // Initial X position of the fish
+float fishSpeed = 0.2f;  // Speed of the fish movement
 
 glm::vec3 pyramidPeakPositions[] = {
 glm::vec3(-6.0f,  3.6f,  -6.0f),
@@ -49,7 +51,8 @@ void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Mode
 
     // define the model matrix
     glm::mat4 model = glm::mat4(1.0f);
-    model = glm::translate(model, glm::vec3(5.0f, -1.0f, -5.0f));
+    fishX = sin(glfwGetTime() * fishSpeed) *3;  //dozovliti da ide od 0 do 0.3 pa onda obrunto
+    model = glm::translate(model, glm::vec3(5.0f + fishX, -1.0f, -5.0f));
     model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 1.0f));
 
