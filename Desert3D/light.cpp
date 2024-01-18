@@ -12,6 +12,7 @@
 #include <glm/gtc/type_ptr.hpp>
 
 #include "light.h"
+using namespace glm;
 
 float rotationSpeed = 0.1;
 float r = 0.8;
@@ -34,7 +35,7 @@ double mapRange(double value, double inMin, double inMax, double outMin, double 
     return outMin + (value - inMin) * (outMax - outMin) / (inMax - inMin);
 }
 
-void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation, glm::vec3 pyramidPositions[], bool paused, bool restarted) {
+void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation, glm::vec3 pyramidPositions[], bool paused, bool restarted, float fishX) {
     updateVariables(paused, restarted);
     glClearColor(0.243 + yLast / 2, 0.435 + yLast / 2, 0.529 + yLast / 2, 1.0);
 
@@ -76,18 +77,22 @@ void setLight(unsigned int lightingShader, glm::vec3 cameraTranslation, glm::vec
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].constant"), 1.0f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].linear"), 0.7f);
     glUniform1f(glGetUniformLocation(lightingShader, "pointLights[2].quadratic"), 1.8f);
+    // spotLight
+    glUniform3f(glGetUniformLocation(lightingShader, "spotLight.position"), pyramidPositions[2].x, pyramidPositions[2].y + 2.0f, pyramidPositions[2].z);
+    glUniform3f(glGetUniformLocation(lightingShader, "spotLight.direction"), 5.0f + fishX, 0.0f, -5.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "spotLight.ambient"), 1.0f, 0.0f, 0.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "spotLight.diffuse"), 1.0f, 0.0f, 0.0f);
+    glUniform3f(glGetUniformLocation(lightingShader, "spotLight.specular"), 0.0f, 0.0f, 0.0f);
+    glUniform1f(glGetUniformLocation(lightingShader, "spotLight.constant"), 1.0f);
+    glUniform1f(glGetUniformLocation(lightingShader, "spotLight.linear"), 0.09f);
+    glUniform1f(glGetUniformLocation(lightingShader, "spotLight.quadratic"), 0.032f);
+    glUniform1f(glGetUniformLocation(lightingShader, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
 
     glUniform3f(glGetUniformLocation(lightingShader, "viewPos"), cameraTranslation.x, cameraTranslation.y, cameraTranslation.z); //todo adjust with view
 
-    // spotLight
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.position"), 0.0f, 5.0f, 5.0f); //todo adjust with view
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.direction"), 0.0f, 0.0f, 0.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.ambient"), 0.0f, 0.0f, 0.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.diffuse"), 1.0f, 1.0f, 1.0f);
-    //glUniform3f(glGetUniformLocation(lightingShader, "spotLight.specular"), 1.0f, 1.0f, 1.0f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.constant"), 1.0f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.linear"), 0.09f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.quadratic"), 0.032f);
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.cutOff"), glm::cos(glm::radians(12.5f)));
-    //glUniform1f(glGetUniformLocation(lightingShader, "spotLight.outerCutOff"), glm::cos(glm::radians(15.0f)));
+   /* std::cout << "cutoff " << cos(glm::cos(glm::radians(12.5f))) << std::endl;
+    glm::vec3 lightDir = normalize(glm::vec3(pyramidPositions[2].x, pyramidPositions[2].y + 2.0f, pyramidPositions[2].z) - vec3(-5.0f + fishX, 0.0f, -5.0f));
+    std::cout << "lightDir (" << lightDir.x << ", " << lightDir.y << ", " << lightDir.z << ")" << std::endl;
+    float theta = glm::dot(lightDir, normalize(-vec3(5.0f + fishX, 0.0f, -5.0f)));
+    std::cout << "theta " << theta << std::endl;*/
 }

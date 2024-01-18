@@ -243,7 +243,7 @@ int main() {
 
         view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
         activeShader.use();
-        setLight(activeShader.ID, cameraPosition, pyramidPeakPositions, paused, restared);
+        setLight(activeShader.ID, cameraPosition, pyramidPeakPositions, paused, restared, fishX);
         glUseProgram(0);
 
         // render created objects

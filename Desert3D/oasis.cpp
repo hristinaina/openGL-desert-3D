@@ -60,8 +60,6 @@ void createWater(unsigned int texture) {
 }
 
 void renderWater(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection) {
-    glEnable(GL_BLEND);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     glUseProgram(shaderProgram);
 
@@ -94,5 +92,4 @@ void renderWater(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     glUseProgram(0);
-    glDisable(GL_BLEND);
 }
