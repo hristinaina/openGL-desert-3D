@@ -29,6 +29,8 @@ bool restared = false;
 float cameraSpeed = 0.03f;
 float fishX = 0.0f;  // Initial X position of the fish
 float fishSpeed = 0.2f;  // Speed of the fish movement
+float spotlightIntensity = 0.5;
+float intensityRate = 0.005;
 
 glm::vec3 pyramidPeakPositions[] = {
 glm::vec3(-6.0f,  3.6f,  -6.0f),
@@ -51,7 +53,7 @@ void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Mode
 
     // define the model matrix
     glm::mat4 model = glm::mat4(1.0f);
-    fishX = sin(glfwGetTime() * fishSpeed) *3;  //dozovliti da ide od 0 do 0.3 pa onda obrunto
+    fishX = sin(glfwGetTime() * fishSpeed) *3; 
     model = glm::translate(model, glm::vec3(5.0f + fishX, -1.0f, -5.0f));
     model = glm::scale(model, glm::vec3(0.05f, 0.05f, 0.05f));
     model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 1.0f));
@@ -202,6 +204,19 @@ int main() {
             restared = true;
             paused = false;
         }
+        // decrease/increase spotlight intensity
+        if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+            if (spotlightIntensity + intensityRate >= 1.0)
+                spotlightIntensity = 1.0;
+            else spotlightIntensity += intensityRate;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+            if (spotlightIntensity - intensityRate <= 0.0)
+                spotlightIntensity = 0.0;
+            else spotlightIntensity -= intensityRate;
+        }
         // move up-down
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
         { 
@@ -243,7 +258,7 @@ int main() {
 
         view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
         activeShader.use();
-        setLight(activeShader.ID, cameraPosition, pyramidPeakPositions, paused, restared, fishX);
+        setLight(activeShader.ID, cameraPosition, pyramidPeakPositions, paused, restared, fishX, spotlightIntensity);
         glUseProgram(0);
 
         // render created objects

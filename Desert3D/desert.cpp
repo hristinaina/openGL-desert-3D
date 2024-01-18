@@ -36,6 +36,7 @@ glm::vec3 floorPositions[] = {
 };
 
 
+
 void createPyramids(unsigned texture) {
 
     GLfloat vertices[] = {
@@ -218,6 +219,13 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
         glBindVertexArray(floorVAO);
         glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
     }
+
+    // define the model matrix
+    glm::mat4 model = glm::mat4(1.0f);
+    model = glm::translate(model, glm::vec3(10.0f, -2.0f, 0.0f));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+    glBindVertexArray(floorVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);

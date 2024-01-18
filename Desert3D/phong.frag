@@ -97,40 +97,18 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 
 vec3 CalcSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
+    vec3 ambient = light.ambient  * vec3(texture(material.diffuse, TexCoords));;
     vec3 lightDir = normalize(light.position - fragPos);
-    float theta = dot(lightDir, normalize(-light.direction));
 
-    // Check if the fragment is within the spotlight cone
-    if (theta > cos(light.cutOff))
-    {
-        // Diffuse shading
+    float theta = acos(dot(-lightDir, normalize(light.direction)));
+    float epsilon = radians(light.cutOff);
+    if (theta < epsilon) {
         float diff = max(dot(normal, lightDir), 0.0);
-        
-        // Specular shading
-        vec3 reflectDir = reflect(-lightDir, normal);
-        float spec = pow(max(dot(viewDir, reflectDir), 0.0), material.shininess);
-        
-        // Attenuation
-        float distance = length(light.position - fragPos);
-        float attenuation = 1.0 / (light.constant + light.linear * distance +
-                                   light.quadratic * (distance * distance));
-        
-        // Combine results
-        vec3 ambient  = light.ambient  * vec3(texture(material.diffuse, TexCoords));
-        vec3 diffuse  = light.diffuse  * diff * vec3(texture(material.diffuse, TexCoords));
-        vec3 specular = light.specular * spec * vec3(texture(material.specular, TexCoords));
-        
-        ambient  *= attenuation;
-        diffuse  *= attenuation;
-        specular *= attenuation;
-
-        return (ambient + diffuse + specular);
+        float attenuation = pow(cos(theta), 4.0);
+        vec3 diffuse = light.diffuse * diff * vec3(texture(material.diffuse, TexCoords))  * attenuation;
+        return diffuse + ambient;
     }
-    else
-    {
-        // Fragment is outside the spotlight cone, return black
-        return vec3(0.0);
-    }
+    return vec3(0.0f);
 }
 
 void main()
