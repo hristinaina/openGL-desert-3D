@@ -14,7 +14,8 @@
 
 GLuint pyramidVAO, pyramidVBO;
 GLuint floorVAO, floorVBO;
-unsigned pyramidTexture, sandTexture;
+GLuint signatureVAO, signatureVBO;
+unsigned pyramidTexture, sandTexture, signatureTexture;
 
 
 glm::vec3 pyramidPositions[] = {
@@ -34,7 +35,6 @@ glm::vec3 floorPositions[] = {
     glm::vec3(0.0f,  0.0f, 10.0f),
     glm::vec3(10.0f,  0.0f, 10.0f),
 };
-
 
 
 void createPyramids(unsigned texture) {
@@ -139,6 +139,45 @@ void createFloor(unsigned texture) {
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+
+void createSignature(unsigned texture) {
+    float vertices[] =
+    {   //X    Y            S    T    
+        -20.0f, 0.0f,  24.0f, 0.0f, -1.0f, 0.0f,  1.0, -1.0,
+        -48.0f, 0.0f,  24.0f,  0.0f, -1.0f, 0.0f,  -1.0, -1.0,
+        -20.0f, 0.0f,  29.0f, 0.0f, -1.0f, 0.0f,  1.0, 1.0,
+        -48.0f, 0.0f,  29.0f,  0.0f, -1.0f, 0.0f,  -1.0, 1.0,
+    };
+
+    glGenVertexArrays(1, &signatureVAO);
+    glGenBuffers(1, &signatureVBO);
+
+    glBindVertexArray(signatureVAO);
+
+    glBindBuffer(GL_ARRAY_BUFFER, signatureVAO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Position attribute
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)0);
+    glEnableVertexAttribArray(0);
+
+    // Normal attribute
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(3 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(1);
+
+    // Texture coordinates attribute
+    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(GLfloat), (GLvoid*)(6 * sizeof(GLfloat)));
+    glEnableVertexAttribArray(2);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+
+    //Texture
+    signatureTexture = texture;
+    glBindTexture(GL_TEXTURE_2D, signatureTexture); //to set up the texture
+    glBindTexture(GL_TEXTURE_2D, 0);
+}
+
 void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection) {
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -225,6 +264,40 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     model = glm::translate(model, glm::vec3(10.0f, -2.0f, 0.0f));
     glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
     glBindVertexArray(floorVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindVertexArray(0);
+    glUseProgram(0);
+}
+
+
+void renderSignature(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection) {
+
+    glUseProgram(shaderProgram);
+
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 0);
+    glUniform1f(glGetUniformLocation(shaderProgram, "map"), 0);
+    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "alpha"), 1.0f);
+
+    GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
+    GLint Vloc = glGetUniformLocation(shaderProgram, "uV");
+    GLint Ploc = glGetUniformLocation(shaderProgram, "uP");
+
+    glUniformMatrix4fv(Vloc, 1, GL_FALSE, glm::value_ptr(view));
+    glUniformMatrix4fv(Ploc, 1, GL_FALSE, glm::value_ptr(projection));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(glm::mat4(1.0f)));
+
+    // bind diffuse map
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, signatureTexture);
+    // bind specular map
+    glActiveTexture(GL_TEXTURE1);
+    glBindTexture(GL_TEXTURE_2D, signatureTexture);
+
+    glBindVertexArray(signatureVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     glBindTexture(GL_TEXTURE_2D, 0);

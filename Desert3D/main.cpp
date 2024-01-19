@@ -147,12 +147,14 @@ int main() {
     unsigned sandTexture = TextureFromFile("sand.jpg", "res");
     unsigned waterTexture = TextureFromFile("water.jpg", "res");
     unsigned grassTexture = TextureFromFile("grass.png", "res");
+    unsigned signatureTexture = TextureFromFile("signature.png", "res");
 
     // Create objects
     createWater(waterTexture);
     createPyramids(pyramidTexture);
     createFloor(sandTexture);
     createGrass(grassTexture);
+    createSignature(signatureTexture);
     Model sphere(std::string("res/sphere.obj"));
     Model fish(std::string("res/Fish/12265_Fish_v1_L2.obj"));
     Model cube(std::string("res/Apple/10162_Apple_v01_l3.obj"));
@@ -172,7 +174,11 @@ int main() {
     glm::vec3 cameraPosition = pyramidPosition + glm::vec3(0.0f, 30.0f, 0.0f);  
     glm::vec3 cameraFront = pyramidPosition - cameraPosition;
     glm::vec3 cameraUp = glm::vec3(0.0f, 0.0f, -1.0f);
+    glm::vec3 cameraPosition2D = cameraPosition;
+    glm::vec3 cameraFront2D = cameraFront;
+    glm::vec3 cameraUp2D = cameraUp;
     glm::mat4 view = glm::lookAt(cameraPosition, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp);
+    glm::mat4 view2D = glm::lookAt(cameraPosition2D, pyramidPosition + glm::vec3(0.0f, 6.6f, 0.0f), cameraUp2D);
 
     glEnable(GL_DEPTH_TEST);
     glCullFace(GL_BACK);
@@ -272,8 +278,7 @@ int main() {
         setLight(activeShader.ID, cameraPosition, pyramidPeakPositions, paused, restared, fishX, spotlightIntensity);
         glUseProgram(0);
 
-        // render created objects
-       
+        // render created objects 
         renderFish(activeShader, view, projection, fish);
         renderWater(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
@@ -283,6 +288,7 @@ int main() {
         renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(5.0f, 0.0f, 0.5f)), view, projection);
         renderPyramids(activeShader.ID, view, projection);   
         renderSphere(activeShader.ID, view, projection, sphere, cube, pyramidPeakPositions);
+        renderSignature(activeShader.ID,  view2D, projectionO);
        
         glfwSwapBuffers(window);
         glfwPollEvents();

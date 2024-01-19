@@ -9,4 +9,8 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projec
 
 void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection);
 
+void createSignature(unsigned texture);
+
+void renderSignature(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projection);
+
 #endif
