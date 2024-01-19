@@ -19,18 +19,15 @@
 
 using namespace std;
 
-/*  TODO
-* 9. dodati uniformu za odredjivanje providnosti ove boje tj teksture u fragment shader
-* 10. dodati ime i br indeksa
-*/
-
 bool paused = false;
 bool restared = false;
 float cameraSpeed = 0.03f;
 float fishX = 0.0f;  // Initial X position of the fish
 float fishSpeed = 0.2f;  // Speed of the fish movement
+float fishAlpha = 1.0f;
 float spotlightIntensity = 0.5;
 float intensityRate = 0.005;
+bool renderGrass = true;
 
 glm::vec3 pyramidPeakPositions[] = {
 glm::vec3(-6.0f,  3.6f,  -6.0f),
@@ -38,7 +35,7 @@ glm::vec3(6.0f,  3.6f, 7.0f),
 glm::vec3(-4.0f, 6.6f, 6.0f),
 };
 
-void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Model fish) {
+void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Model fish, float fishAlpha) {
     shaderProgram.use();
 
     //material
@@ -46,7 +43,7 @@ void renderFish(Shader shaderProgram, glm::mat4 view, glm::mat4 projection, Mode
     shaderProgram.setInt("material.specular", 0);
     shaderProgram.setFloat("map", 0);
     shaderProgram.setFloat("material.shininess", 32.0f);
-    shaderProgram.setFloat("alpha", 1.0f);
+    shaderProgram.setFloat("alpha", fishAlpha);
 
     shaderProgram.setMat4("uV", view);
     shaderProgram.setMat4("uP", projection);
@@ -193,14 +190,16 @@ int main() {
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
-        // choose projection type
-        else if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+        // hide/show grass
+        if (glfwGetKey(window, GLFW_KEY_1) == GLFW_PRESS)
         {
-            projection = projectionP;
+            renderGrass = false;
+            fishAlpha = 0.0;
         }
-        else if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+        else if (glfwGetKey(window, GLFW_KEY_2) == GLFW_PRESS)
         {
-            projection = projectionO;
+            renderGrass = true;
+            fishAlpha = 1.0;
         }
         // choose shader type
         if (glfwGetKey(window, GLFW_KEY_3) == GLFW_PRESS)
@@ -210,6 +209,15 @@ int main() {
         else if (glfwGetKey(window, GLFW_KEY_4) == GLFW_PRESS)
         {
             activeShader = gouraudShader;
+        }
+        // choose projection type
+        if (glfwGetKey(window, GLFW_KEY_5) == GLFW_PRESS)
+        {
+            projection = projectionP;
+        }
+        else if (glfwGetKey(window, GLFW_KEY_6) == GLFW_PRESS)
+        {
+            projection = projectionO;
         }
         // pause or restart the scene
         if (glfwGetKey(window, GLFW_KEY_P) == GLFW_PRESS)
@@ -279,13 +287,15 @@ int main() {
         glUseProgram(0);
 
         // render created objects 
-        renderFish(activeShader, view, projection, fish);
+        renderFish(activeShader, view, projection, fish, fishAlpha);
         renderWater(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
-        renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(-2.0f, 0.0f, -5.0f)), view, projection);
-        renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-2.15f, 0.0f, -0.0f)), view, projection);
-        renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-1.17f, 0.0f, 0.3f)), view, projection);
-        renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(5.0f, 0.0f, 0.5f)), view, projection);
+        if (renderGrass) {
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(-2.0f, 0.0f, -5.0f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-2.15f, 0.0f, -0.0f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-1.17f, 0.0f, 0.3f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(5.0f, 0.0f, 0.5f)), view, projection);
+        }
         renderPyramids(activeShader.ID, view, projection);   
         renderSphere(activeShader.ID, view, projection, sphere, cube, pyramidPeakPositions);
         renderSignature(activeShader.ID,  view2D, projectionO);
