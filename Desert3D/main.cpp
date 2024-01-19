@@ -291,10 +291,11 @@ int main() {
         renderWater(activeShader.ID, view, projection);
         renderFloor(activeShader.ID, view, projection);
         if (renderGrass) {
-            renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(-2.0f, 0.0f, -5.0f)), view, projection);
-            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-2.15f, 0.0f, -0.0f)), view, projection);
-            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-1.17f, 0.0f, 0.3f)), view, projection);
-            renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(5.0f, 0.0f, 0.5f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(-0.5f, 0.0f, -5.0f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(1.3f, 0.0f, -0.0f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(0.1f, 0.0f, 0.0f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.0f), glm::vec3(-0.2f, 0.0f, -0.9f)), view, projection);
+            renderBush(activeShader.ID, glm::translate(glm::mat4(1.f), glm::vec3(8.0f, 0.0f, 0.2f)), view, projection);
         }
         renderPyramids(activeShader.ID, view, projection);   
         renderSphere(activeShader.ID, view, projection, sphere, cube, pyramidPeakPositions);

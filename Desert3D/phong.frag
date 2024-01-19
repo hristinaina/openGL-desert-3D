@@ -129,7 +129,7 @@ void main()
     final = pow(final, vec3(1.0 / 2.2)); //Apply gamma correction to the final values.
 
     // Check if the alpha value of the texture at this pixel is greater than a threshold
-    float alphaThreshold = 0.1;
+    float alphaThreshold = 0.5;
     if (texture.a > alphaThreshold) {
         // There is texture at this pixel
         FragColor = vec4(final, alpha);

@@ -67,8 +67,8 @@ void createGrass(unsigned int texture) {
         // Position            // Normal           // Texture coordinates
         0.0f, 3.0f, 0.0f,      1.0f, 0.0f, 1.0f,   0.0f, 0.0f,
         0.0f, 0.0f, 0.0f,      1.0f, 0.0f, 1.0f,   0.0f, 1.0f,
-        5.0f, 3.0f, 0.0f,      1.0f, 0.0f, 1.0f,   1.0f, 0.0f,
-        5.0f, 0.0f, 0.0f,      1.0f, 0.0f, 1.0f,   1.0f, 1.0f,
+        2.5f, 3.0f, 0.0f,      1.0f, 0.0f, 1.0f,   1.0f, 0.0f,
+        2.5f, 0.0f, 0.0f,      1.0f, 0.0f, 1.0f,   1.0f, 1.0f,
     };
 
     glGenVertexArrays(1, &grassVAO);
@@ -139,24 +139,43 @@ void renderBush(unsigned int shaderProgram, glm::mat4 defaltModel, glm::mat4 vie
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     //second grass
-    model = glm::translate(model, glm::vec3(2.0f, 0.0f, 2.0f));
-    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
     glBindVertexArray(grassVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     //third grass
-    model = defaltModel;
-    model = glm::translate(model, glm::vec3(0.0f, 0.0f, 2.0f));
-    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
     glBindVertexArray(grassVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 
     //fourth grass
-    model = defaltModel;
-    model = glm::translate(model, glm::vec3(0.3f, 0.0f, -2.0f));
-    model = glm::rotate(model, glm::radians(-45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+    glBindVertexArray(grassVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //fifth grass
+    model = glm::rotate(model, glm::radians(45.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+    glBindVertexArray(grassVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //sixth grass
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+    glBindVertexArray(grassVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //seventh grass
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
+    glBindVertexArray(grassVAO);
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    //eight grass
+    model = glm::rotate(model, glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
     glUniformMatrix4fv(Mloc, 1, GL_FALSE, glm::value_ptr(model));
     glBindVertexArray(grassVAO);
     glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
