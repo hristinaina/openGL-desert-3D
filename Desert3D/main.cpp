@@ -145,11 +145,12 @@ int main() {
     unsigned waterTexture = TextureFromFile("water.jpg", "res");
     unsigned grassTexture = TextureFromFile("grass.png", "res");
     unsigned signatureTexture = TextureFromFile("signature.png", "res");
+    unsigned blackTexture = TextureFromFile("black.jpg", "res");
 
     // Create objects
     createWater(waterTexture);
-    createPyramids(pyramidTexture);
-    createFloor(sandTexture);
+    createPyramids(pyramidTexture, blackTexture);
+    createFloor(sandTexture, blackTexture);
     createGrass(grassTexture);
     createSignature(signatureTexture);
     Model sphere(std::string("res/sphere.obj"));

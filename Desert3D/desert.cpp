@@ -15,7 +15,7 @@
 GLuint pyramidVAO, pyramidVBO;
 GLuint floorVAO, floorVBO;
 GLuint signatureVAO, signatureVBO;
-unsigned pyramidTexture, sandTexture, signatureTexture;
+unsigned pyramidTexture, sandTexture, signatureTexture, blackTexture;
 
 
 glm::vec3 pyramidPositions[] = {
@@ -37,7 +37,7 @@ glm::vec3 floorPositions[] = {
 };
 
 
-void createPyramids(unsigned texture) {
+void createPyramids(unsigned texture, unsigned black) {
 
     GLfloat vertices[] = {
 
@@ -94,9 +94,10 @@ void createPyramids(unsigned texture) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);   //GL_NEAREST, GL_LINEAR
     glBindTexture(GL_TEXTURE_2D, 0);
+    blackTexture = black;
 }
 
-void createFloor(unsigned texture) {
+void createFloor(unsigned texture, unsigned black) {
     // Vertices for the floor
     GLfloat vertices[] = {
         -10.0f, 0.0f, -10.0f, 0.0f, -1.0f, 0.0f,  -1.0, -1.0,
@@ -186,8 +187,8 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projec
 
     //material
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 0);
-    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
+    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 10.0f);
     glUniform1f(glGetUniformLocation(shaderProgram, "map"), 0);
     glUniform1f(glGetUniformLocation(shaderProgram, "alpha"), 1.0f);
 
@@ -202,7 +203,7 @@ void renderPyramids(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projec
     glBindTexture(GL_TEXTURE_2D, pyramidTexture);
     // bind specular map
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, pyramidTexture);
+    glBindTexture(GL_TEXTURE_2D, blackTexture);
 
     for (unsigned int i = 0; i < 3; i++)
     {
@@ -228,9 +229,9 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
 
     //material
     glUniform1i(glGetUniformLocation(shaderProgram, "material.diffuse"), 0);
-    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 0);
+    glUniform1i(glGetUniformLocation(shaderProgram, "material.specular"), 1);
     glUniform1f(glGetUniformLocation(shaderProgram, "map"), 0);
-    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 32.0f);
+    glUniform1f(glGetUniformLocation(shaderProgram, "material.shininess"), 10.0f);
     glUniform1f(glGetUniformLocation(shaderProgram, "alpha"), 1.0f);
 
     GLint Mloc = glGetUniformLocation(shaderProgram, "uM");
@@ -245,7 +246,7 @@ void renderFloor(unsigned int shaderProgram, glm::mat4 view, glm::mat4 projectio
     glBindTexture(GL_TEXTURE_2D, sandTexture);
     // bind specular map
     glActiveTexture(GL_TEXTURE1);
-    glBindTexture(GL_TEXTURE_2D, sandTexture);
+    glBindTexture(GL_TEXTURE_2D, blackTexture);
 
     for (unsigned int i = 0; i < 3; i++)
     {
